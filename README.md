@@ -21,3 +21,4 @@
 - Create Database (start in test mode)
 - Add first collection, which will hold our posts
 - Initialize the SDK = generate a private key file for your service account then set environment variable: export GOOGLE_APPLICATION_CREDENTIALS="/home/user/Downloads/service-account-file.json"
+- use busboy to upload images

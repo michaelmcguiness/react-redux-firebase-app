@@ -29,7 +29,7 @@ exports.validateSignUpData = newUser => {
   };
 };
 
-exports.validateLoginData = data => {
+exports.validateLoginData = user => {
   let errors = {};
 
   if (isEmpty(user.email)) errors.email = "Must not be empty";
