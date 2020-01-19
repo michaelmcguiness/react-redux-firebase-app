@@ -13,47 +13,28 @@ import TextField from "@material-ui/core/Textfield";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
+// Redux stuff
+import { connect } from "react-redux";
+import { loginUser } from "../redux/actions/userActions";
+
 const styles = theme => ({
   ...theme.spreadIt
 });
 
-function Login({ classes, history }) {
+function Login({ classes, history, UI: { loading } }) {
   const [state, setState] = useState({
     email: "",
     password: "",
-    loading: false,
     errors: {}
   });
 
   const handleSubmit = event => {
     event.preventDefault();
-    setState({
-      ...state,
-      loading: true
-    });
     const userData = {
       email: state.email,
       password: state.password
     };
-    axios
-      .post("/login", userData)
-      .then(res => {
-        console.log(res.data);
-        localStorage.setItem("FBIdToken", `Bearer ${res.data.token}`);
-        setState({
-          ...state,
-          loading: false
-        });
-        history.push("/");
-      })
-      .catch(err => {
-        console.log(err.response.data);
-        setState({
-          ...state,
-          loading: false,
-          errors: err.response.data
-        });
-      });
+    loginUser(userData, history);
   };
 
   const handleChange = event => {
@@ -124,4 +105,23 @@ function Login({ classes, history }) {
   );
 }
 
-export default withStyles(styles)(Login);
+Login.protoTypes = {
+  classes: PropTypes.object.isRequired,
+  loginUser: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
+  UI: PropTypes.object.isRequired
+};
+
+const mapStateToProps = state => ({
+  user: state.user,
+  UI: state.UI
+});
+
+const mapActionsToProps = {
+  loginUser
+};
+
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(withStyles(styles)(Login));
