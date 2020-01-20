@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import PropTypes from "prop-types";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
 import AppIcon from "../images/AppIcon.png";
@@ -13,51 +12,48 @@ import TextField from "@material-ui/core/Textfield";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 
+// Redux stuff
+import { connect } from "react-redux";
+import { signupUser } from "../redux/actions/userActions";
+
 const styles = theme => ({
   ...theme.spreadIt
 });
 
-function Signup({ classes, history }) {
+function Signup(props) {
+  const {
+    classes,
+    UI: { loading }
+  } = props;
+
   const [state, setState] = useState({
     email: "",
     password: "",
     confirmPassword: "",
     handle: "",
-    loading: false,
     errors: {}
   });
 
+  useEffect(() => {
+    if (props.UI.errors) {
+      setState({
+        ...state,
+        errors: props.UI.errors
+      });
+    }
+  }, [props.UI.errors]);
+
   const handleSubmit = event => {
     event.preventDefault();
-    setState({
-      ...state,
-      loading: true
-    });
+
     const newUserData = {
       email: state.email,
       password: state.password,
       confirmPassword: state.confirmPassword,
       handle: state.handle
     };
-    axios
-      .post("/signup", newUserData)
-      .then(res => {
-        console.log(res.data);
-        localStorage.setItem("FBIdToken", `Bearer ${res.data.token}`);
-        setState({
-          ...state,
-          loading: false
-        });
-        history.push("/");
-      })
-      .catch(err => {
-        console.log(err.response.data);
-        setState({
-          ...state,
-          loading: false,
-          errors: err.response.data
-        });
-      });
+
+    props.signupUser(newUserData, props.history);
   };
 
   const handleChange = event => {
@@ -73,7 +69,7 @@ function Signup({ classes, history }) {
       <Grid item sm>
         <img src={AppIcon} alt="monkey" className={classes.image} />
         <Typography variant="h2" className={classes.pageTitle}>
-          Login
+          Sign Up
         </Typography>
         <form noValidate onSubmit={handleSubmit}>
           <TextField
@@ -134,10 +130,10 @@ function Signup({ classes, history }) {
             variant="contained"
             color="primary"
             className={classes.button}
-            disabled={state.loading}
+            disabled={loading}
           >
-            Signup
-            {state.loading && (
+            Sign Up
+            {loading && (
               <CircularProgress size={30} className={classes.progress} />
             )}
           </Button>
@@ -152,4 +148,18 @@ function Signup({ classes, history }) {
   );
 }
 
-export default withStyles(styles)(Signup);
+signupUser.propTypes = {
+  classes: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  UI: PropTypes.object.isRequired,
+  signupUser: PropTypes.func.isRequired
+};
+
+const mapStateToProps = state => ({
+  user: state.user,
+  UI: state.UI
+});
+
+export default connect(mapStateToProps, { signupUser })(
+  withStyles(styles)(Signup)
+);

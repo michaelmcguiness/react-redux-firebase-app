@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import withStyles from "@material-ui/core/styles/withStyles";
 import PropTypes from "prop-types";
-import axios from "axios";
 import { Link } from "react-router-dom";
 
 import AppIcon from "../images/AppIcon.png";
@@ -21,12 +20,26 @@ const styles = theme => ({
   ...theme.spreadIt
 });
 
-function Login({ classes, history, UI: { loading } }) {
+function Login(props) {
+  const {
+    classes,
+    UI: { loading }
+  } = props;
+
   const [state, setState] = useState({
     email: "",
     password: "",
     errors: {}
   });
+
+  useEffect(() => {
+    if (props.UI.errors) {
+      setState({
+        ...state,
+        errors: props.UI.errors
+      });
+    }
+  }, [props.UI.errors]);
 
   const handleSubmit = event => {
     event.preventDefault();
@@ -34,7 +47,8 @@ function Login({ classes, history, UI: { loading } }) {
       email: state.email,
       password: state.password
     };
-    loginUser(userData, history);
+
+    props.loginUser(userData, props.history);
   };
 
   const handleChange = event => {
@@ -87,10 +101,10 @@ function Login({ classes, history, UI: { loading } }) {
             variant="contained"
             color="primary"
             className={classes.button}
-            disabled={state.loading}
+            disabled={loading}
           >
             Login
-            {state.loading && (
+            {loading && (
               <CircularProgress size={30} className={classes.progress} />
             )}
           </Button>

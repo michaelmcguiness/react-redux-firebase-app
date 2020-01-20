@@ -15,7 +15,6 @@ const Home = () => {
         setState({
           screams: res.data
         });
-        console.log(state);
       })
       .catch(err => console.log(err));
   }, []);
