@@ -10,7 +10,6 @@ import axios from "axios";
 
 export const loginUser = (userData, history) => dispatch => {
   dispatch({ type: LOADING_UI });
-  console.log(userData);
   axios
     .post("/login", userData)
     .then(res => {
@@ -68,6 +67,16 @@ export const uploadImage = formData => dispatch => {
   dispatch({ type: LOADING_USER });
   axios
     .post(`/user/image`, formData)
+    .then(() => {
+      dispatch(getUserData());
+    })
+    .catch(err => console.log(err));
+};
+
+export const editUserDetails = userDetails => dispatch => {
+  dispatch({ type: LOADING_USER });
+  axios
+    .post("/user", userDetails)
     .then(() => {
       dispatch(getUserData());
     })
