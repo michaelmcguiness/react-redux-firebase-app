@@ -49,7 +49,6 @@ function EditDetails(props) {
       ...state,
       open: true
     });
-    console.log(state);
   };
 
   const handleClose = () => {
