@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import PropTypes from "prop-types";
 import MyButton from "../../util/MyButton";
 import dayjs from "dayjs";
@@ -66,14 +66,32 @@ function ScreamDialog(props) {
     UI: { loading }
   } = props;
 
-  const [state, setState] = useState({ open: false });
+  const [state, setState] = useState({
+    open: false,
+    oldPath: "",
+    newPath: ""
+  });
+
+  useEffect(() => {
+    if (props.openDialog) {
+      handleOpen();
+    }
+  }, []);
 
   const handleOpen = () => {
-    setState({ open: true });
+    let oldPath = window.location.pathname;
+
+    const newPath = `/users/${props.userHandle}/scream/${props.screamId}`;
+    window.history.pushState(null, null, newPath);
+
+    if (oldPath === newPath) oldPath = `/users/${props.userHandle}`;
+
+    setState({ open: true, oldPath, newPath });
     props.getScream(props.screamId);
   };
 
   const handleClose = () => {
+    window.history.pushState(null, null, state.oldPath);
     setState({ open: false });
     props.clearErrors();
   };
