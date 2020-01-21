@@ -36,7 +36,6 @@ function DeleteScream(props) {
   };
 
   const deleteScream = () => {
-    console.log(screamId);
     props.deleteScream(screamId);
     setState({ open: false });
   };
