@@ -4,6 +4,7 @@ import PropTypes from "prop-types";
 
 import Scream from "../components/scream/Scream";
 import Profile from "../components/profile/Profile";
+import ScreamSkeleton from "../util/ScreamSkeleton";
 
 import { connect } from "react-redux";
 import { getScreams } from "../redux/actions/dataActions";
@@ -23,7 +24,7 @@ const Home = props => {
             <Scream key={scream.screamId} scream={scream} />
           ))
         ) : (
-          <p>Loading...</p>
+          <ScreamSkeleton />
         )}
       </Grid>
       <Grid item sm={4} xs={12}>
